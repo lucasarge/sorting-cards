@@ -35,13 +35,24 @@ ul {
 }
 
 .header {
+    display: grid;
     background-color: #ec4195;
-    width: 100%;
     padding: 20px;
     color: white;
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
-    box-shadow: 0px 5px 5px rgb(49, 49, 49);    
+    box-shadow: 0px 5px 5px rgb(49, 49, 49);
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 150px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    width: 100%;
 }
 
 .content {
@@ -54,11 +65,14 @@ ul {
     padding-bottom: 50px;
 }
 
-button {
+.button {
+    display: inline-block;
     background-color: green;
     border-radius: 100px;
     padding: 20px;
     width: 200px;
     font-size: 2rem;
     color: white;
+    text-align: center;
+    text-decoration: none;
 }

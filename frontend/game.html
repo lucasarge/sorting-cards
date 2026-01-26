@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="src/css/style.css">
+    <title>Sorting Cards</title>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <a href="index.html">
+                <img src="src/assets/logo.png" alt="logo">
+            </a>
+        </div>
+        <div>
+            <h2>Brain Wiring</h2>
+            <h1>Sorting Cards</h1>
+        </div>
+        <div></div>
+    </div>
+    <div class="content">
+        <h1>Game</h1>
+
+        <script src="node_modules/gridstack/dist/gridstack-all.js"></script>
+        <link href="node_modules/gridstack/dist/gridstack.min.css" rel="stylesheet"/>
+        <style type="text/css">
+        .grid-stack { background: #FAFAD2; }
+        .grid-stack-item-content { background-color: #18BC9C; }
+        </style>
+
+        <div class="grid-stack"></div>
+
+        <script type="text/javascript">
+        var items = [
+            {content: 'my first widget'}, // will default to location (0,0) and 1x1
+            {w: 2, content: 'another longer widget!'} // will be placed next at (1,0) and 2x1
+        ];
+        var grid = GridStack.init({
+            disableResize: true
+        })
+        grid.load(items);
+        </script>
+
+	</div>
+</body>
+</html>
