@@ -76,3 +76,55 @@ ul {
     text-align: center;
     text-decoration: none;
 }
+
+/* Gridstack background */
+.grid-stack {
+    background-color: #f5f5f5; /* light gray for the grid area */
+    padding: 10px;
+}
+
+/* The widget container */
+.grid-stack-item {
+    transition: transform 0.2s ease;
+}
+
+/* Widget content */
+.grid-stack-item-content {
+    background-color: #18BC9C; /* teal-ish main color */
+    color: #fff;                /* text color */
+    padding: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    cursor: move;               /* indicates draggable */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+/* Optional: highlight widget on hover */
+.grid-stack-item-content:hover {
+    background-color: #15a489; 
+    transform: scale(1.02);
+}
+
+/* Widget title */
+.grid-stack-item-content strong {
+    font-size: 20px;
+}
+
+/* Description text spacing */
+.grid-stack-item-content p {
+    margin: 0;
+}
+
+/* Resize handle styling (if enabled) */
+.grid-stack-item.ui-resizable .ui-resizable-handle {
+    background-color: rgba(255,255,255,0.5);
+    border-radius: 4px;
+}
+
+/* Smooth drag/resize animation */
+.grid-stack-item.ui-draggable, 
+.grid-stack-item.ui-resizable {
+    transition: all 0.15s ease;
+}
