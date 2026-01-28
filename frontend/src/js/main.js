@@ -46,7 +46,7 @@ async function loadCards(setName) {
 /* ------------------ GRIDS ------------------ */
 
 const yesGrid = GridStack.init({
-    column: 4,
+    column: 5,
     cellHeight: 170,
     margin: 10,
     disableResize: true,
@@ -54,7 +54,7 @@ const yesGrid = GridStack.init({
 }, '.yes-grid');
 
 const maybeGrid = GridStack.init({
-    column: 4,
+    column: 5,
     cellHeight: 170,
     margin: 10,
     disableResize: true,
@@ -62,7 +62,7 @@ const maybeGrid = GridStack.init({
 }, '.maybe-grid');
 
 const noGrid = GridStack.init({
-    column: 4,
+    column: 5,
     cellHeight: 170,
     margin: 10,
     disableResize: true,
@@ -77,34 +77,46 @@ noGrid.on('added removed', updatePhase1State);
 
 /* ------------------ RENDER CARDS ------------------ */
 
+function addCardToGrid(grid, container, card) {
+    const el = document.createElement('div');
+    el.classList.add('grid-stack-item');
+    el.dataset.id = card.id;
+
+    const content = document.createElement('div');
+    content.classList.add('grid-stack-item-content');
+    content.innerHTML = `
+        <div class="title">${card.title}</div>
+        <div class="description">
+            ${card.description.replace(/\n/g, '<br>')}
+        </div>
+        <div class="copyright">
+            ©2026 Divergent Thinking. All rights reserved.
+        </div>
+    `;
+
+    el.appendChild(content);
+    container.appendChild(el);
+
+    grid.makeWidget(el, {
+        w: 1,
+        h: 1,
+        autoPosition: true
+    });
+}
+
 function renderCardsInGrid(cards) {
     const yesContainer = document.querySelector('.yes-grid');
+    const maybeContainer = document.querySelector('.maybe-grid');
+    const noContainer = document.querySelector('.no-grid');
 
-    cards.forEach(card => {
-        const el = document.createElement('div');
-        el.classList.add('grid-stack-item');
-        el.dataset.id = card.id;
-
-        const content = document.createElement('div');
-        content.classList.add('grid-stack-item-content');
-        content.innerHTML = `
-            <div class="title">${card.title}</div>
-            <div class="description">
-                ${card.description.replace(/\n/g, '<br>')}
-            </div>
-            <div class="copyright">
-                ©2026 Divergent Thinking. All rights reserved.
-            </div>
-        `;
-
-        el.appendChild(content);
-        yesContainer.appendChild(el);
-
-        yesGrid.makeWidget(el, {
-            w: 1,
-            h: 1,
-            autoPosition: true
-        });
+    cards.forEach((card, index) => {
+        if (index % 3 === 0) {
+            addCardToGrid(noGrid, noContainer, card);
+        } else if (index % 3 === 1) {
+            addCardToGrid(maybeGrid, maybeContainer, card);
+        } else {
+            addCardToGrid(yesGrid, yesContainer, card);
+        }
     });
 }
 
@@ -230,32 +242,74 @@ function goToPhase3() {
         // 🔥 Add Phase 3 click handler
         fresh.addEventListener('click', () => selectNumber1(el));
     });
-
-    updateContinuePhase3();
 }
 
 /* ------------------ #1 SELECTION ------------------ */
 
 function selectNumber1(cardEl) {
-    const cardId = cardEl.dataset.id;
-
-    // Deselect previous #1
-    yesGrid.engine.nodes.forEach(n => {
-        n.el.classList.remove('selected');
-    });
+    // Clear previous selection
+    document.querySelectorAll('.grid-stack-item')
+        .forEach(el => el.classList.remove('selected'));
 
     // Select new #1
     cardEl.classList.add('selected');
-    gameState.number1 = cardId;
+    gameState.number1 = cardEl.dataset.id;
 
-    console.log('🏆 Number 1:', cardId);
+    const continueBtn = document.getElementById('continueBtn');
+    continueBtn.disabled = false;
 
-    updateContinuePhase3();
+    // 🔥 THIS IS THE IMPORTANT PART
+    continueBtn.onclick = goToFinalPhase;
 }
 
-function updateContinuePhase3() {
-    const continueBtn = document.getElementById('continueBtn');
-    continueBtn.disabled = !gameState.number1;
+/* ----------------- PHASE 3 -----------------*/
+
+function goToFinalPhase() {
+    console.log('🏁 Final Phase');
+
+    gameState.phase = 4;
+
+    // 🔥 Clear the entire page body
+    document.body.innerHTML = '';
+
+    // 🖼️ Create final container
+    const finalContainer = document.createElement('div');
+    finalContainer.id = 'final-screen';
+    finalContainer.style.cssText = `
+        width: 100vw;
+        height: 100vh;
+        background-image: url('/images/final-bg.jpg');
+        background-size: cover;
+        background-position: center;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 20px;
+        padding: 40px;
+        box-sizing: border-box;
+    `;
+
+    // 🎴 Render top 4 cards
+    gameState.top4.forEach(cardId => {
+        const original = document.querySelector(
+            `.grid-stack-item[data-id="\${cardId}"]`
+        );
+
+        if (!original) return;
+
+        const clone = original.cloneNode(true);
+        clone.classList.remove('selected');
+
+        // ⭐ Highlight the #1 card
+        if (cardId === gameState.number1) {
+            clone.style.border = '4px solid gold';
+            clone.style.boxShadow = '0 0 20px gold';
+        }
+
+        finalContainer.appendChild(clone);
+    });
+
+    document.body.appendChild(finalContainer);
 }
 
 /* ------------------ INIT ------------------ */

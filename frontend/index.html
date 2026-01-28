@@ -1,25 +1,69 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<link rel="icon" type="image/png" href="/images/icon.png" />
-		<link rel="stylesheet" href="src/css/style.css">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Sorting Cards</title>
-    </head>
-    <body>
-		<div class="header">
-			<div class="logo">
-				<img src="/images/logo.png" alt="logo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/images/icon.png" />
+    <link rel="stylesheet" href="src/css/style.css">
+    <link href="node_modules/gridstack/dist/gridstack.min.css" rel="stylesheet"/>
+    <title>Sorting Cards</title>
+</head>
+<body>
+    
+    <div class="content">
+
+		<div id="top-bar">
+			<div id="instructions">
+				Drag at least 4 cards into YES then press the continue button.
 			</div>
-			<div>
-				<h2>Brain Wiring</h2>
-				<h1>Sorting Cards</h1>
-			</div>
-			<div></div>
+
+			<button id="continueBtn" disabled>
+				Continue
+			</button>
 		</div>
-		<div class="content">
-			<div class="instructions">
+
+        <div class="lanes">
+            <div id="yes" class="lane">
+                <div id="yes-label" class="lane-label">YES</div>
+                <div class="grid-stack yes-grid"></div>
+            </div>
+
+            <div id="maybe" class="lane">
+                <div class="lane-label">MAYBE</div>
+                <div class="grid-stack maybe-grid"></div>
+            </div>
+
+            <div id="no" class="lane">
+                <div class="lane-label">NO</div>
+                <div class="grid-stack no-grid"></div>
+            </div>
+        </div>
+
+        <script src="node_modules/gridstack/dist/gridstack-all.js"></script>
+        <script type="module" src="/src/js/main.js"></script>
+	</div>
+</body>
+</html>
+
+
+
+<!--
+
+    <div class="header">
+        <div class="logo">
+            <a href="index.html">
+                <img src="/images/logo.png" alt="logo">
+            </a>
+        </div>
+        <div>
+            <h2>Brain Wiring</h2>
+            <h1>Sorting Cards</h1>
+        </div>
+        <div></div>
+    </div>
+
+
+    			<div class="instructions">
 				<h3>Instructions:</h3>
 				<br>
 				<p>You’ll see a set of Motivational Driver cards.</p>
@@ -62,7 +106,4 @@
 				<p>If you want to come back later, that’s fine too.</p>
 				<p>When you’re ready, move on to the reflection.</p>
 			</div>
-			<a href="game.html" class="button">Play</a>
-		</div>
-  	</body>
-</html>
+    -->

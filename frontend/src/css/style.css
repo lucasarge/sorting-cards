@@ -2,6 +2,13 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
 }
 
 body {
@@ -56,13 +63,13 @@ ul {
 }
 
 .content {
-    padding: 5%;
+    padding: 1%;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
 }
 
 .instructions {
-    padding-bottom: 50px;
+    padding-bottom: 1%;
 }
 
 .button {
@@ -229,4 +236,39 @@ ul {
     transform: scale(1.05);
     transition: transform 0.2s, background-color 0.2s, border 0.2s;
     border: rgb(5, 176, 2) 3px solid;
+}
+
+#top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin: 0 0 1.5vh 0;  /* padding scales with viewport */
+    width: 100%;
+    height: 8vh;          /* bar height is 8% of viewport height */
+    box-sizing: border-box;
+    background-color: #0f172a;
+    border-radius: 8px;
+}
+
+#instructions {
+    font-size: 3vh;       /* scales with height of viewport */
+    line-height: 1.2;
+    flex-grow: 1;         /* take up remaining space */
+    margin-right: 2vw;    /* space between text and button */
+    margin-left: 1.25vw;
+}
+
+#continueBtn {
+    font-size: 2.5vh;     /* scales with viewport height */
+    padding: 0.5em 1em;   /* internal button padding stays proportional */
+    white-space: nowrap;
+    border-radius: 8px;
+    margin-right: 8px;
+    background-color: #eb3686;
+}
+
+#continueBtn:hover {
+    background-color: #eb3688c3;
+    transform: scale(1.02);
 }
