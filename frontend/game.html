@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/images/icon.png" />
     <link rel="stylesheet" href="src/css/style.css">
     <link href="node_modules/gridstack/dist/gridstack.min.css" rel="stylesheet"/>
     <title>Sorting Cards</title>
@@ -21,12 +22,28 @@
         <div></div>
     </div>
     <div class="content">
-        <h1>Game</h1>
 
-        <div class="grid-stack"></div>
+        <div class="lanes">
+            <div id="yes" class="lane">
+                <div id="yes-label" class="lane-label">YES</div>
+                <div class="grid-stack yes-grid"></div>
+            </div>
+
+            <div id="maybe" class="lane">
+                <div class="lane-label">MAYBE</div>
+                <div class="grid-stack maybe-grid"></div>
+            </div>
+
+            <div id="no" class="lane">
+                <div class="lane-label">NO</div>
+                <div class="grid-stack no-grid"></div>
+            </div>
+        </div>
 
         <script src="node_modules/gridstack/dist/gridstack-all.js"></script>
         <script type="module" src="/src/js/main.js"></script>
+
+        <button class="play" id="continueBtn">Continue</button>
 	</div>
 </body>
 </html>

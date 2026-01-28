@@ -56,12 +56,12 @@ ul {
 }
 
 .content {
-    padding: 100px;
+    padding: 5%;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.description {
+.instructions {
     padding-bottom: 50px;
 }
 
@@ -92,24 +92,31 @@ ul {
 .grid-stack-item-content {
     background-color: #18BC9C; /* teal-ish main color */
     color: #fff;                /* text color */
-    padding: 16px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 16px;
     cursor: move;               /* indicates draggable */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    box-shadow: rgba(0, 0, 0, 0.068) 5px 10px 5px;
 }
 
 /* Optional: highlight widget on hover */
 .grid-stack-item-content:hover {
-    background-color: #15a489; 
+    background-color: #f1f1f1a9; 
     transform: scale(1.02);
 }
 
 /* Widget title */
 .grid-stack-item-content strong {
     font-size: 20px;
+}
+
+.grid-stack-item-content small {
+    font-size: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 /* Description text spacing */
@@ -127,4 +134,99 @@ ul {
 .grid-stack-item.ui-draggable, 
 .grid-stack-item.ui-resizable {
     transition: all 0.15s ease;
+}
+
+.lanes {
+    display: flex;
+    flex-direction: column;
+}
+
+.lane {
+    display: grid;
+    grid-template-columns: 80px 1fr; /* 👈 label | grid */
+    align-items: stretch;
+}
+
+/* YES / MAYBE / NO */
+.lane-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 14px;
+
+    color: white;
+
+}
+
+/* Grid itself */
+.grid-stack {
+    padding: 10px;
+    min-height: 60px;
+}
+
+#yes {
+    border-radius: 8px 0 0 0;
+    background-color: #0f172a;
+}
+
+#maybe {
+    background-color: #0f172a;
+}
+
+#no {
+    border-radius: 0 0 8px 8px;
+    background-color: #0f172a;
+}
+
+.yes-grid {
+    border-radius: 8px 8px 0 0;
+    background-color: rgb(180, 255, 180);
+}
+
+.maybe-grid {
+    background-color: rgb(255, 255, 180);
+}
+
+.no-grid {
+    border-radius: 0 0 8px 8px;
+    background-color: rgb(255, 180, 180);
+}
+
+.grid-stack-item-content {
+    background-color: white;
+    color: #20335f;
+    border-radius: 8px;
+}
+
+.title {
+    padding: 16px;
+    background-color: #20335f;
+    color: white;
+    text-align: center;
+}
+
+.description {
+    padding: 16px;
+    font-size: 100%;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.copyright {
+    font-size: xx-small;
+    text-align: center;
+}
+
+.card-selected {
+    outline: 3px solid rgb(5, 176, 2);
+}
+
+.grid-stack-item.selected .grid-stack-item-content {
+    background-color: #e0ffe0;
+    transform: scale(1.05);
+    transition: transform 0.2s, background-color 0.2s, border 0.2s;
+    border: rgb(5, 176, 2) 3px solid;
 }
