@@ -272,29 +272,101 @@ function selectNumber1(cardEl) {
 
 function goToFinalPhase() {
     console.log('🏁 Final Phase');
-
-    const yesLabel = document.getElementById('yes-label');
-    const yesLane = document.getElementById('yes');
-    const yesGrid = document.querySelector('.yes-grid')
-    if (yesLabel) yesLabel.style.display = 'none';
-    if (yesLane) yesLane.style.display = 'block';
-    if (yesGrid) {
-        yesGrid.style.backgroundImage = "url('/images/background.png')";
-        yesGrid.style.backgroundSize = 'cover';
-        yesGrid.style.backgroundPosition = 'center';
-        yesGrid.style.backgroundRepeat = 'no-repeat';
-        yesGrid.style.width = '100%';
-    }
-    document.body.classList.add('final-phase');
-
     gameState.phase = 4;
 
     const instructions = document.getElementById('instructions');
     if (instructions) instructions.textContent = 'Summary of Motivation Drivers:';
 
-    document.querySelectorAll('.grid-stack-item')
-        .forEach(el => el.classList.remove('selected'));
-}    
+    // Hide other UI elements
+    const yesLabel = document.getElementById('yes-label');
+    const yesLane = document.getElementById('yes');
+    const yesGridEl = document.querySelector('.yes-grid')
+    if (yesLabel) yesLabel.style.display = 'none';
+    if (yesLane) yesLane.style.display = 'block';
+    if (yesGridEl) {
+        yesGridEl.style.backgroundImage = "url('/images/background.png')";
+        yesGridEl.style.backgroundSize = 'cover';
+        yesGridEl.style.backgroundPosition = 'center';
+        yesGridEl.style.backgroundRepeat = 'no-repeat';
+        yesGridEl.style.width = '100%';
+        yesGridEl.style.height = window.innerHeight * 0.88 + 'px';
+        yesGridEl.style.position = 'relative';
+    }
+
+
+
+    document.body.classList.add('final-phase');
+
+    yesGrid.disable();
+    layoutCardsByCorner(yesGridEl);
+}
+
+function layoutCardsByCorner(container) {
+    if (!container) return;
+
+    const cards = container.querySelectorAll('.grid-stack-item');
+    const padding = 20;
+    const cardWidth = 150;
+    const cardHeight = 170;
+
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+
+    // corner origin points
+    const corners = {
+        tl: { x: padding, y: padding, cols: 2, rows: 2 },
+        tr: { x: containerWidth - padding, y: padding, cols: 2, rows: 2 },
+        bl: { x: padding, y: containerHeight - padding, cols: 2, rows: 2 },
+        br: { x: containerWidth - padding, y: containerHeight - padding, cols: 2, rows: 2 }
+    };
+
+    // track how many cards are in each corner
+    const cornerCounts = { tl: 0, tr: 0, bl: 0, br: 0 };
+
+    cards.forEach(el => {
+        let corner = 'tl';
+        if (el.dataset.tl === 'true') corner = 'tl';
+        else if (el.dataset.tr === 'true') corner = 'tr';
+        else if (el.dataset.bl === 'true') corner = 'bl';
+        else if (el.dataset.br === 'true') corner = 'br';
+
+        const count = cornerCounts[corner];
+
+        // calculate row & col in the small subgrid (2x2)
+        const row = Math.floor(count / corners[corner].cols);
+        const col = count % corners[corner].cols;
+
+        let posX, posY;
+
+        switch (corner) {
+            case 'tl':
+                posX = corners[corner].x + col * (cardWidth + 1000);
+                posY = corners[corner].y + row * (cardHeight + 300);
+                break;
+            case 'tr':
+                posX = corners[corner].x - cardWidth - col * (cardWidth + 1000);
+                posY = corners[corner].y + row * (cardHeight + 300);
+                break;
+            case 'bl':
+                posX = corners[corner].x + col * (cardWidth + 1000);
+                posY = corners[corner].y - cardHeight - row * (cardHeight + 300);
+                break;
+            case 'br':
+                posX = corners[corner].x - cardWidth - col * (cardWidth + 1000);
+                posY = corners[corner].y - cardHeight - row * (cardHeight + 300);
+                break;
+        }
+
+        el.style.position = 'absolute';
+        el.style.left = posX + 'px';
+        el.style.top = posY + 'px';
+
+        cornerCounts[corner]++;
+    });
+}
+
+
+
 
 /* ------------------ INIT ------------------ */
 
