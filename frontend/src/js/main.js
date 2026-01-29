@@ -10,7 +10,8 @@ const gameState = {
         no: []
     },
     top4: [],
-    number1: null
+    number1: null,
+    currentSet: 'motivation'
 };
 
 /* ------------------ DOM READY ------------------ */
@@ -84,6 +85,7 @@ function addCardToGrid(grid, container, card) {
     const el = document.createElement('div');
     el.classList.add('grid-stack-item');
     el.dataset.id = card.id;
+    el.dataset.corner = card.corner;  
 
     const content = document.createElement('div');
     content.classList.add('grid-stack-item-content');
@@ -298,72 +300,147 @@ function goToFinalPhase() {
     document.body.classList.add('final-phase');
 
     yesGrid.disable();
-    layoutCardsByCorner(yesGridEl);
+    layoutCardsByCorner(yesGrid);
 }
 
-function layoutCardsByCorner(container) {
-    if (!container) return;
+// function layoutCardsByCorner(container) {
+//     if (!container) return;
 
-    const cards = container.querySelectorAll('.grid-stack-item');
-    const padding = 20;
-    const cardWidth = 150;
-    const cardHeight = 170;
+//     let bl = [], br = [], tl = [], tr = [];
 
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
+//     const cards = Array.from(container.querySelectorAll('.grid-stack-item'));
+//     cards.forEach(card => {
+//         const corner = card.dataset.corner;
+//         if (corner === "bl") bl.push(card);
+//         else if (corner === "br") br.push(card);
+//         else if (corner === "tl") tl.push(card);
+//         else if (corner === "tr") tr.push(card);
+//     });
 
-    // corner origin points
-    const corners = {
-        tl: { x: padding, y: padding, cols: 2, rows: 2 },
-        tr: { x: containerWidth - padding, y: padding, cols: 2, rows: 2 },
-        bl: { x: padding, y: containerHeight - padding, cols: 2, rows: 2 },
-        br: { x: containerWidth - padding, y: containerHeight - padding, cols: 2, rows: 2 }
-    };
+//     console.log({ tl, tr, bl, br }); // check arrays
+//     if(tl>=2 && tr>=2) {
 
-    // track how many cards are in each corner
+//     }
+// }
+
+function layoutCardsByCorner(grid) {
+    if (!grid) return;
+
+    grid.column(4);
+    grid.compact();
+
+    const cornerMap = { tl: [], tr: [], bl: [], br: [] };
+    grid.engine.nodes.forEach(n => {
+        const el = n.el;
+        const corner = el.dataset.corner || 'tl';
+        cornerMap[corner].push(el);
+    });
+
     const cornerCounts = { tl: 0, tr: 0, bl: 0, br: 0 };
 
-    cards.forEach(el => {
-        let corner = 'tl';
-        if (el.dataset.tl === 'true') corner = 'tl';
-        else if (el.dataset.tr === 'true') corner = 'tr';
-        else if (el.dataset.bl === 'true') corner = 'bl';
-        else if (el.dataset.br === 'true') corner = 'br';
+    // Loop through all 16 cells
+    for (let y = 0; y < 4; y++) {
+        for (let x = 0; x < 4; x++) {
+            // Determine quadrant
+            let corner;
+            if (x < 2 && y < 2) corner = 'tl';
+            else if (x >= 2 && y < 2) corner = 'tr';
+            else if (x < 2 && y >= 2) corner = 'bl';
+            else corner = 'br';
 
-        const count = cornerCounts[corner];
+            const realCards = cornerMap[corner];
+            let cardToPlace;
 
-        // calculate row & col in the small subgrid (2x2)
-        const row = Math.floor(count / corners[corner].cols);
-        const col = count % corners[corner].cols;
+            if (cornerCounts[corner] < realCards.length) {
+                cardToPlace = realCards[cornerCounts[corner]];
+            } else {
+                // Placeholder
+                cardToPlace = document.createElement('div');
+                cardToPlace.classList.add('grid-stack-item', 'placeholder');
+                const content = document.createElement('div');
+                content.classList.add('grid-stack-item-content');
+                content.style.visibility = 'hidden';
+                cardToPlace.appendChild(content);
+                grid.addWidget(cardToPlace, { x, y, w: 1, h: 1 });
+            }
 
-        let posX, posY;
+            // Adjust x/y to hug the corner
+            let finalX = x;
+            let finalY = y;
 
-        switch (corner) {
-            case 'tl':
-                posX = corners[corner].x + col * (cardWidth + 1000);
-                posY = corners[corner].y + row * (cardHeight + 300);
-                break;
-            case 'tr':
-                posX = corners[corner].x - cardWidth - col * (cardWidth + 1000);
-                posY = corners[corner].y + row * (cardHeight + 300);
-                break;
-            case 'bl':
-                posX = corners[corner].x + col * (cardWidth + 1000);
-                posY = corners[corner].y - cardHeight - row * (cardHeight + 300);
-                break;
-            case 'br':
-                posX = corners[corner].x - cardWidth - col * (cardWidth + 1000);
-                posY = corners[corner].y - cardHeight - row * (cardHeight + 300);
-                break;
+            switch (corner) {
+                case 'tl': break; // top-left quadrant stays as-is
+                case 'tr': finalX = 3 - (x % 2); break; // top-right: push to right
+                case 'bl': finalY = 3 - (y % 2); break; // bottom-left: push to bottom
+                case 'br': finalX = 3 - (x % 2); finalY = 3 - (y % 2); break; // bottom-right: bottom right
+            }
+
+            grid.update(cardToPlace, { x: finalX, y: finalY, w: 1, h: 1 });
+            cornerCounts[corner]++;
         }
+    }
 
-        el.style.position = 'absolute';
-        el.style.left = posX + 'px';
-        el.style.top = posY + 'px';
-
-        cornerCounts[corner]++;
-    });
+    grid.disable();
+    grid.compact();
 }
+
+
+
+
+// function layoutCardsByCorner(container) {
+//     if (!container) return;
+
+//     const cards = Array.from(container.querySelectorAll('.grid-stack-item'));
+
+//     const containerWidth = container.clientWidth;
+//     const containerHeight = container.clientHeight;
+
+//     const subCols = 2; // 2x2 subgrid per corner
+//     const subRows = 2;
+
+//     const cardWidth = 150;
+//     const cardHeight = 170;
+//     const padding = 20; // distance from corner edges
+//     const spacingX = 20; // horizontal spacing between cards
+//     const spacingY = 20; // vertical spacing between cards
+
+//     // Define origin points for each corner
+//     const corners = {
+//         tl: { x: padding, y: padding },
+//         tr: { x: containerWidth - padding - cardWidth * subCols - spacingX, y: padding },
+//         bl: { x: padding, y: containerHeight - padding - cardHeight * subRows - spacingY },
+//         br: { x: containerWidth - padding - cardWidth * subCols - spacingX, y: containerHeight - padding - cardHeight * subRows - spacingY }
+//     };
+
+//     // Track how many cards per corner
+//     const cornerCounts = { tl: 0, tr: 0, bl: 0, br: 0 };
+
+//     cards.forEach(el => {
+//         let corner = 'tl';
+//         if (el.dataset.tl === 'true') corner = 'tl';
+//         else if (el.dataset.tr === 'true') corner = 'tr';
+//         else if (el.dataset.bl === 'true') corner = 'bl';
+//         else if (el.dataset.br === 'true') corner = 'br';
+
+//         const count = cornerCounts[corner];
+//         const row = Math.floor(count / subCols);
+//         const col = count % subCols;
+
+//         const origin = corners[corner];
+//         const posX = origin.x + col * (cardWidth + spacingX);
+//         const posY = origin.y + row * (cardHeight + spacingY);
+
+//         el.style.position = 'absolute';
+//         el.style.left = posX + 'px';
+//         el.style.top = posY + 'px';
+//         el.style.width = cardWidth + 'px';
+//         el.style.height = cardHeight + 'px';
+
+//         cornerCounts[corner]++;
+//     });
+// }
+
+
 
 
 
@@ -371,6 +448,6 @@ function layoutCardsByCorner(container) {
 /* ------------------ INIT ------------------ */
 
 (async () => {
-    const cards = await loadCards('motivation');
+    const cards = await loadCards(gameState.currentSet);
     renderCardsInGrid(cards);
 })();
