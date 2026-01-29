@@ -1,110 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- =====================================================
+         META
+    ====================================================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- =====================================================
+         FAVICON
+    ====================================================== -->
     <link rel="icon" type="image/png" href="/images/icon.png" />
+
+    <!-- =====================================================
+         STYLES
+    ====================================================== -->
     <link rel="stylesheet" href="src/css/style.css">
-    <link href="node_modules/gridstack/dist/gridstack.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="node_modules/gridstack/dist/gridstack.min.css">
+
+	<!-- =====================================================
+		 SCRIPTS
+	====================================================== -->
+	<script src="node_modules/gridstack/dist/gridstack-all.js"></script>
+	<script type="module" src="/src/js/main.js"></script>
+
     <title>Sorting Cards</title>
 </head>
+
 <body>
-    
+    <!-- =====================================================
+         MAIN APP CONTENT
+    ====================================================== -->
     <div class="content">
 
-		<div id="top-bar">
-			<div id="instructions">
-				Drag at least 4 cards into YES then press the continue button.
-			</div>
+        <!-- ================= TOP BAR ================= -->
+        <div id="top-bar">
+            <div id="instructions">
+                Drag at least 4 cards into YES then press the continue button.
+            </div>
 
-			<button id="continueBtn" disabled>
-				Continue
-			</button>
-		</div>
+            <button id="continueBtn" disabled>
+                Continue
+            </button>
+        </div>
 
+        <!-- ================= LANES ================= -->
         <div class="lanes">
+
+            <!-- YES LANE -->
             <div id="yes" class="lane">
                 <div id="yes-label" class="lane-label">YES</div>
                 <div class="grid-stack yes-grid"></div>
             </div>
 
+            <!-- MAYBE LANE -->
             <div id="maybe" class="lane">
                 <div class="lane-label">MAYBE</div>
                 <div class="grid-stack maybe-grid"></div>
             </div>
 
+            <!-- NO LANE -->
             <div id="no" class="lane">
                 <div class="lane-label">NO</div>
                 <div class="grid-stack no-grid"></div>
             </div>
-		</div>
-
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/fitty/2.3.6/fitty.min.js"></script>
-        <script src="node_modules/gridstack/dist/gridstack-all.js"></script>
-        <script type="module" src="/src/js/main.js"></script>
-	</div>
+        </div>
+    </div>
 </body>
 </html>
-
-
-
-<!--
-
-    <div class="header">
-        <div class="logo">
-            <a href="index.html">
-                <img src="/images/logo.png" alt="logo">
-            </a>
-        </div>
-        <div>
-            <h2>Brain Wiring</h2>
-            <h1>Sorting Cards</h1>
-        </div>
-        <div></div>
-    </div>
-
-
-    			<div class="instructions">
-				<h3>Instructions:</h3>
-				<br>
-				<p>You’ll see a set of Motivational Driver cards.</p>
-				<p>Each card describes something that can feed a person’s energy, interest, or motivation.</p>
-				<p>There’s no right way to do this.</p>
-				<p>Go with what feels most true for you.</p>
-				<br>
-				<h4>Step 1 — Read &amp; Notice</h4>
-				<p>Read through the cards one by one.</p>
-				<p>As you do, notice:</p>
-				<ul>
-					<li>which cards feel energising or meaningful</li>
-					<li>which cards feel neutral</li>
-					<li>which cards feel draining or effortful</li>
-				</ul>
-				<p>You don’t need to analyse why.</p>
-				<p>Just notice your reaction.</p>
-				<br>
-				<h4>Step 2 — Choose Your Top Four</h4>
-				<p>From the full set, choose four drivers that matter most to you overall.</p>
-				<p>Think whole of life, not just work.</p>
-				<p>These are the drivers that:</p>
-				<ul>
-					<li>help you feel engaged</li>
-					<li>make things feel more sustainable</li>
-					<li>matter even when life gets busy</li>
-				</ul>
-				<br>
-				<h4>Step 3 — Choose One Main Driver</h4>
-				<p>From your four, choose one main driver.</p>
-				<p>This is the driver that feels:</p>
-				<ul>
-					<li>most important right now, or</li>
-					<li>hardest to do without</li>
-				</ul>
-				<p>You don’t need to justify this choice.</p>
-				<br>
-				<h4>Take Your Time</h4>
-				<p>If you want to pause partway through, that’s fine.</p>
-				<p>If you want to come back later, that’s fine too.</p>
-				<p>When you’re ready, move on to the reflection.</p>
-			</div>
-    -->

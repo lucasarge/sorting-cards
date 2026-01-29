@@ -1,4 +1,7 @@
-/* ------------------ RESET ------------------ */
+/* =========================================================
+   RESET & BASE
+========================================================= */
+
 * {
     margin: 0;
     padding: 0;
@@ -6,7 +9,8 @@
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-html, body {
+html,
+body {
     height: 100%;
     overflow: hidden;
 }
@@ -15,13 +19,17 @@ body {
     background-color: #21325d;
 }
 
-/* ------------------ TYPOGRAPHY ------------------ */
+/* =========================================================
+   TYPOGRAPHY
+========================================================= */
+
 h1 { font-size: 2.5rem; }
 h2 { font-size: 1.75rem; }
 h3 { font-size: 2rem; }
 h4 { font-size: 1.75rem; }
 
-p, ul {
+p,
+ul {
     font-size: 1.25rem;
 }
 
@@ -29,7 +37,10 @@ ul {
     padding-left: 50px;
 }
 
-/* ------------------ HEADER ------------------ */
+/* =========================================================
+   HEADER (currently unused / archived)
+========================================================= */
+
 .header {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -50,7 +61,10 @@ ul {
     width: 100%;
 }
 
-/* ------------------ CONTENT ------------------ */
+/* =========================================================
+   CONTENT WRAPPER
+========================================================= */
+
 .content {
     padding: 1%;
     color: white;
@@ -60,7 +74,10 @@ ul {
     padding-bottom: 1%;
 }
 
-/* ------------------ BUTTON ------------------ */
+/* =========================================================
+   BUTTON (generic utility button – not Continue)
+========================================================= */
+
 .button {
     display: inline-block;
     width: 200px;
@@ -73,18 +90,25 @@ ul {
     text-decoration: none;
 }
 
-/* ------------------ GRIDSTACK ------------------ */
+/* =========================================================
+   GRIDSTACK BASE
+========================================================= */
+
 .grid-stack {
     padding: 10px;
     min-height: 60px;
     background-color: #f5f5f5;
 }
 
+/* Smooth movement when GridStack repositions items */
 .grid-stack-item {
     transition: transform 0.2s ease;
 }
 
-/* 🔥 CARD CORE FIX */
+/* =========================================================
+   CARD CORE
+========================================================= */
+
 .grid-stack-item-content {
     display: flex;
     flex-direction: column;
@@ -95,7 +119,10 @@ ul {
     cursor: move;
 }
 
-/* ------------------ CARD SECTIONS ------------------ */
+/* =========================================================
+   CARD SECTIONS
+========================================================= */
+
 .title {
     padding: 12px;
     background-color: #20335f;
@@ -113,7 +140,7 @@ ul {
     line-height: 1.3;
     overflow: hidden;
 
-    /* optional graceful clamp */
+    /* Graceful multi-line clamp */
     display: -webkit-box;
     -webkit-line-clamp: 6;
     line-clamp: 6;
@@ -127,17 +154,25 @@ ul {
     padding-bottom: 6px;
 }
 
-/* ------------------ HOVER / SELECTION ------------------ */
+/* =========================================================
+   HOVER & SELECTION STATES
+========================================================= */
+
+/* Default hover (disabled later in final phase) */
 .grid-stack-item-content:hover {
     background-color: #f1f1f1a9;
 }
 
+/* Selected cards (Phase 2 & 3) */
 .grid-stack-item.selected .grid-stack-item-content {
     background-color: #e0ffe0;
     border: 3px solid rgb(5, 176, 2);
 }
 
-/* ------------------ LANES ------------------ */
+/* =========================================================
+   LANES LAYOUT
+========================================================= */
+
 .lanes {
     display: flex;
     flex-direction: column;
@@ -159,8 +194,13 @@ ul {
     color: white;
 }
 
-/* ------------------ LANE COLORS ------------------ */
-#yes, #maybe, #no {
+/* =========================================================
+   LANE COLORS & SHAPING
+========================================================= */
+
+#yes,
+#maybe,
+#no {
     background-color: #0f172a;
 }
 
@@ -186,7 +226,10 @@ ul {
     border-radius: 0 0 8px 8px;
 }
 
-/* ------------------ TOP BAR ------------------ */
+/* =========================================================
+   TOP BAR
+========================================================= */
+
 #top-bar {
     display: flex;
     align-items: center;
@@ -219,8 +262,16 @@ ul {
     transform: scale(1.02);
 }
 
-/* ------------------ FINAL ------------------ */
+/* =========================================================
+   FINAL PHASE OVERRIDES
+========================================================= */
+
+.grid-stack-item.selected .grid-stack-item-content:hover {
+    background-color: #e0ffe0;
+}   
 
 body.final-phase .grid-stack-item-content:hover {
     background-color: white;
 }
+
+
