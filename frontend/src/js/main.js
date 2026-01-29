@@ -31,7 +31,15 @@ function handleContinue() {
         goToPhase3();
     } else if (gameState.phase === 3) {
         console.log('Game complete!');
-        // future: show results screen
+    } else if (gameState.phase === 4) {
+        // Example: load next set automatically
+        if (gameState.currentSet == 'strength') {
+            console.log("COMPLETELY DONE FR FR");
+            document.querySelector('.lanes').innerHTML='';
+        } else {
+            fullSoftReset();
+            startCardPhase('strength');
+        }
     }
 }
 
@@ -43,6 +51,98 @@ async function loadCards(setName) {
     const data = await res.json();
     return data.cards[setName] || [];
 }
+
+async function startCardPhase(setName) {
+    gameState.currentSet = setName;
+
+    // Clear grids
+    yesGrid.removeAll();
+    maybeGrid.removeAll();
+    noGrid.removeAll();
+
+    const yesContainer = document.querySelector('.yes-grid');
+    const maybeContainer = document.querySelector('.maybe-grid');
+    const noContainer = document.querySelector('.no-grid');
+
+    const cards = await loadCards(setName);
+    renderCardsInGrid(cards);
+
+    // Reset phase 1 visuals
+    const continueBtn = document.getElementById('continueBtn');
+    continueBtn.disabled = true;
+
+    const instructions = document.getElementById('instructions');
+    if (instructions) instructions.textContent = 'Drag at least 4 cards into YES then press Continue';
+
+    // Reset game state for this set
+    gameState.lanes = { yes: [], maybe: [], no: [] };
+    gameState.top4 = [];
+    gameState.number1 = null;
+    gameState.phase = 1;
+}
+
+function resetGrids() {
+    yesGrid.removeAll();
+    maybeGrid.removeAll();
+    noGrid.removeAll();
+
+    yesGrid.enable();
+    maybeGrid.enable();
+    noGrid.enable();
+    
+    yesGrid.column(6);
+    yesGrid.enableResize(false);
+    maybeGrid.enableResize(false);
+    noGrid.enableResize(false);
+
+    yesGrid.compact();
+    maybeGrid.compact();
+    noGrid.compact();
+    
+}
+
+function resetUI() {
+    const instructions = document.getElementById('instructions');
+    if (instructions) instructions.textContent = 'Drag at least 4 cards into YES then press Continue.';
+
+    const continueBtn = document.getElementById('continueBtn');
+    continueBtn.disabled = true;
+    continueBtn.onclick = null; // remove old phase handlers
+}
+
+function resetStyles() {
+    // Reset lanes
+    ['yes', 'maybe', 'no'].forEach(id => {
+        const lane = document.getElementById(id);
+        if (lane) {
+            lane.style = ''; // removes all inline styles
+        }
+    });
+
+    // Reset labels
+    const yesLabel = document.getElementById('yes-label');
+    if (yesLabel) yesLabel.style = '';
+
+    // Reset cards
+    document.querySelectorAll('.grid-stack-item').forEach(card => {
+        card.style = '';
+        card.classList.remove('selected', 'placeholder');
+    });
+
+    const yesGridEl = document.querySelector('.yes-grid');
+    if (yesGridEl) {
+        yesGridEl.style.backgroundImage = '';  // remove the image
+        // Optional: force original background-color if needed
+        yesGridEl.style.backgroundColor = 'rgb(180, 255, 180);';
+    }
+}
+
+function fullSoftReset() {
+    resetGrids();
+    resetStyles();
+    resetUI();
+}
+
 
 /* ------------------ GRIDS ------------------ */
 
@@ -105,7 +205,8 @@ function addCardToGrid(grid, container, card) {
     grid.makeWidget(el, {
         w: 1,
         h: 1,
-        autoPosition: true
+        autoPosition: true,
+        resizeHandles: []
     });
 }
 
@@ -303,26 +404,6 @@ function goToFinalPhase() {
     layoutCardsByCorner(yesGrid);
 }
 
-// function layoutCardsByCorner(container) {
-//     if (!container) return;
-
-//     let bl = [], br = [], tl = [], tr = [];
-
-//     const cards = Array.from(container.querySelectorAll('.grid-stack-item'));
-//     cards.forEach(card => {
-//         const corner = card.dataset.corner;
-//         if (corner === "bl") bl.push(card);
-//         else if (corner === "br") br.push(card);
-//         else if (corner === "tl") tl.push(card);
-//         else if (corner === "tr") tr.push(card);
-//     });
-
-//     console.log({ tl, tr, bl, br }); // check arrays
-//     if(tl>=2 && tr>=2) {
-
-//     }
-// }
-
 function layoutCardsByCorner(grid) {
     if (!grid) return;
 
@@ -361,7 +442,7 @@ function layoutCardsByCorner(grid) {
                 content.classList.add('grid-stack-item-content');
                 content.style.visibility = 'hidden';
                 cardToPlace.appendChild(content);
-                grid.addWidget(cardToPlace, { x, y, w: 1, h: 1 });
+                grid.makeWidget(cardToPlace, { x, y, w: 1, h: 1, resizeHandles: [] });
             }
 
             // Adjust x/y to hug the corner
@@ -383,67 +464,6 @@ function layoutCardsByCorner(grid) {
     grid.disable();
     grid.compact();
 }
-
-
-
-
-// function layoutCardsByCorner(container) {
-//     if (!container) return;
-
-//     const cards = Array.from(container.querySelectorAll('.grid-stack-item'));
-
-//     const containerWidth = container.clientWidth;
-//     const containerHeight = container.clientHeight;
-
-//     const subCols = 2; // 2x2 subgrid per corner
-//     const subRows = 2;
-
-//     const cardWidth = 150;
-//     const cardHeight = 170;
-//     const padding = 20; // distance from corner edges
-//     const spacingX = 20; // horizontal spacing between cards
-//     const spacingY = 20; // vertical spacing between cards
-
-//     // Define origin points for each corner
-//     const corners = {
-//         tl: { x: padding, y: padding },
-//         tr: { x: containerWidth - padding - cardWidth * subCols - spacingX, y: padding },
-//         bl: { x: padding, y: containerHeight - padding - cardHeight * subRows - spacingY },
-//         br: { x: containerWidth - padding - cardWidth * subCols - spacingX, y: containerHeight - padding - cardHeight * subRows - spacingY }
-//     };
-
-//     // Track how many cards per corner
-//     const cornerCounts = { tl: 0, tr: 0, bl: 0, br: 0 };
-
-//     cards.forEach(el => {
-//         let corner = 'tl';
-//         if (el.dataset.tl === 'true') corner = 'tl';
-//         else if (el.dataset.tr === 'true') corner = 'tr';
-//         else if (el.dataset.bl === 'true') corner = 'bl';
-//         else if (el.dataset.br === 'true') corner = 'br';
-
-//         const count = cornerCounts[corner];
-//         const row = Math.floor(count / subCols);
-//         const col = count % subCols;
-
-//         const origin = corners[corner];
-//         const posX = origin.x + col * (cardWidth + spacingX);
-//         const posY = origin.y + row * (cardHeight + spacingY);
-
-//         el.style.position = 'absolute';
-//         el.style.left = posX + 'px';
-//         el.style.top = posY + 'px';
-//         el.style.width = cardWidth + 'px';
-//         el.style.height = cardHeight + 'px';
-
-//         cornerCounts[corner]++;
-//     });
-// }
-
-
-
-
-
 
 /* ------------------ INIT ------------------ */
 
