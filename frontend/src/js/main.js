@@ -46,27 +46,30 @@ async function loadCards(setName) {
 /* ------------------ GRIDS ------------------ */
 
 const yesGrid = GridStack.init({
-    column: 5,
+    column: 6,
     cellHeight: 170,
     margin: 10,
     disableResize: true,
-    acceptWidgets: true
+    acceptWidgets: true,
+    float: false
 }, '.yes-grid');
 
 const maybeGrid = GridStack.init({
-    column: 5,
+    column: 6,
     cellHeight: 170,
     margin: 10,
     disableResize: true,
-    acceptWidgets: true
+    acceptWidgets: true,
+    float: false
 }, '.maybe-grid');
 
 const noGrid = GridStack.init({
-    column: 5,
+    column: 6,
     cellHeight: 170,
     margin: 10,
     disableResize: true,
-    acceptWidgets: true
+    acceptWidgets: true,
+    float: false
 }, '.no-grid');
 
 /* ------------------ EVENTS ------------------ */
@@ -155,7 +158,7 @@ function goToPhase2() {
     if (noContainer) noContainer.style.display = 'none';
     if (yesContainer) yesContainer.style.borderRadius = '8px'; 
     if (yesLabel) yesLabel.style.borderRadius = '8px 0 0 8px';
-    if (yesLane) yesLane.style.borderRadius = '8px 0 0 8px';
+    if (yesLane) yesLane.style.borderRadius = '8px';
 
     yesGrid.engine.nodes.forEach(n => {
         n.x = null;
@@ -223,6 +226,8 @@ function goToPhase3() {
     });
     yesGrid.compact();
 
+    continueBtn.disabled = gameState.number1 == null;
+
     // Update instructions
     const instructions = document.getElementById('instructions');
     if (instructions) instructions.textContent = 'Pick your #1 card';
@@ -247,6 +252,7 @@ function goToPhase3() {
 /* ------------------ #1 SELECTION ------------------ */
 
 function selectNumber1(cardEl) {
+    if (gameState.phase !== 3) return;
     // Clear previous selection
     document.querySelectorAll('.grid-stack-item')
         .forEach(el => el.classList.remove('selected'));
@@ -262,55 +268,33 @@ function selectNumber1(cardEl) {
     continueBtn.onclick = goToFinalPhase;
 }
 
-/* ----------------- PHASE 3 -----------------*/
+/* ----------------- FINAL PHASE -----------------*/
 
 function goToFinalPhase() {
     console.log('🏁 Final Phase');
 
+    const yesLabel = document.getElementById('yes-label');
+    const yesLane = document.getElementById('yes');
+    const yesGrid = document.querySelector('.yes-grid')
+    if (yesLabel) yesLabel.style.display = 'none';
+    if (yesLane) yesLane.style.display = 'block';
+    if (yesGrid) {
+        yesGrid.style.backgroundImage = "url('/images/background.png')";
+        yesGrid.style.backgroundSize = 'cover';
+        yesGrid.style.backgroundPosition = 'center';
+        yesGrid.style.backgroundRepeat = 'no-repeat';
+        yesGrid.style.width = '100%';
+    }
+    document.body.classList.add('final-phase');
+
     gameState.phase = 4;
 
-    // 🔥 Clear the entire page body
-    document.body.innerHTML = '';
+    const instructions = document.getElementById('instructions');
+    if (instructions) instructions.textContent = 'Summary of Motivation Drivers:';
 
-    // 🖼️ Create final container
-    const finalContainer = document.createElement('div');
-    finalContainer.id = 'final-screen';
-    finalContainer.style.cssText = `
-        width: 100vw;
-        height: 100vh;
-        background-image: url('/images/final-bg.jpg');
-        background-size: cover;
-        background-position: center;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(2, 1fr);
-        gap: 20px;
-        padding: 40px;
-        box-sizing: border-box;
-    `;
-
-    // 🎴 Render top 4 cards
-    gameState.top4.forEach(cardId => {
-        const original = document.querySelector(
-            `.grid-stack-item[data-id="\${cardId}"]`
-        );
-
-        if (!original) return;
-
-        const clone = original.cloneNode(true);
-        clone.classList.remove('selected');
-
-        // ⭐ Highlight the #1 card
-        if (cardId === gameState.number1) {
-            clone.style.border = '4px solid gold';
-            clone.style.boxShadow = '0 0 20px gold';
-        }
-
-        finalContainer.appendChild(clone);
-    });
-
-    document.body.appendChild(finalContainer);
-}
+    document.querySelectorAll('.grid-stack-item')
+        .forEach(el => el.classList.remove('selected'));
+}    
 
 /* ------------------ INIT ------------------ */
 
