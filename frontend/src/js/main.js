@@ -22,6 +22,7 @@ const gameState = {
     top4: [],
     number1: null,
     currentSet: null,
+    allCards: [],
     cardQueue: [],
     currentCardIndex: 0
 };
@@ -73,9 +74,9 @@ async function loadCards(setName) {
 async function startCardPhase(setName) {
     gameState.phase = 1;
     gameState.currentSet = setName;
-
     const cards = await loadCards(setName);
-    gameState.cardQueue = cards;
+    gameState.allCards = cards;
+    gameState.cardQueue = [...cards];
     gameState.currentCardIndex = 0;
 
     document.querySelector('.choose-mode').style.display = 'grid';
@@ -183,6 +184,7 @@ const seeAllGrid = GridStack.init(seeAllOptions, '.see-all-grid');
 
 function renderAllCards(cardQueue) {
     const seeAllGridEl = document.querySelector('.see-all-grid');
+    seeAllGrid.disable();
     cardQueue.forEach(card => {
         addCardToGrid(seeAllGrid, seeAllGridEl, card);
     });
@@ -210,6 +212,7 @@ function startSingleCardMode() {
 
 function renderCurrentSingleCard() {
     const gridEl = document.querySelector('.single-card-grid');
+    singleCardGrid.disable()
     singleCardGrid.removeAll();
 
     const card = gameState.cardQueue[gameState.currentCardIndex];
@@ -232,7 +235,8 @@ function handleSingleChoice(choice) {
 
     if (gameState.currentCardIndex >= gameState.cardQueue.length) {
         if (gameState.lanes.yes.length < 4) {
-            alert(`You need at least 4 "YES" cards. Let's go through the remaining cards again.`);
+            document.getElementById('instructions').textContent = 
+            `Select atleast ${4-gameState.lanes.yes.length} more card(s) that resonate with you.`;
             gameState.cardQueue = gameState.cardQueue.filter(card => !gameState.lanes.yes.includes(card.id));
             gameState.currentCardIndex = 0;
             if (gameState.cardQueue.length > 0) {
@@ -254,7 +258,7 @@ function handleSingleChoice(choice) {
   _____  _                        ___  
  |  __ \| |                   _  |__ \ 
  | |__) | |__   __ _ ___  ___(_)    ) |
- |  ___/| '_ \ / _` / __|/ _ \     / / 
+ |  ___/| '_ \ / _` / __|/ _ \     /  / 
  | |    | | | | (_| \__ \  __/_   / /_ 
  |_|    |_| |_|\__,_|___/\___(_) |____|
                                                                           
@@ -283,9 +287,9 @@ function goToPhase2() {
     }
     document.querySelector('.phase-2').style.display = 'block';
     const topFourGridEl = document.querySelector('.top-four-grid');
-    
+    topFourGrid.disable();
 
-    const yesCards = gameState.cardQueue.filter(card =>
+    const yesCards = gameState.allCards.filter(card =>
         gameState.lanes.yes.map(id => String(id)).includes(String(card.id))
     );
     yesCards.forEach(card => addCardToGrid(topFourGrid, topFourGridEl, card));
@@ -322,13 +326,13 @@ function goToPhase3() {
     document.querySelector('.phase-3').style.display = 'block';
     
     const topOneGridEl = document.querySelector('.top-one-grid')
+    topOneGrid.disable();
     gameState.phase = 3;
     gameState.number1 = [];
     
-    const topFourCards = gameState.cardQueue.filter(card =>
+    const topFourCards = gameState.allCards.filter(card =>
         gameState.top4.map(id => String(id)).includes(String(card.id))
     );
-    console.log('top 4:',topFourCards)
     topFourCards.forEach(card => addCardToGrid(topOneGrid, topOneGridEl, card));
 
     enableCardSelection(gameState.number1, '.top-one-grid', 1, 1);
@@ -363,9 +367,11 @@ function goToPhase4() {
     gameState.phase = 4;
     document.querySelector('.phase-3').style.display = 'none';
     document.querySelector('.phase-4').style.display = 'block';
+    document.getElementById('instructions').textContent = `Summary of ${gameState.currentSet} cards:`;
     const summaryGridEl = document.querySelector('.summary-grid');
+    summaryGrid.disable()
 
-    const summaryCards = gameState.cardQueue.filter(card =>
+    const summaryCards = gameState.allCards.filter(card =>
         gameState.top4.map(id => String(id)).includes(String(card.id))
     );
     summaryCards.forEach(card => addCardToGrid(summaryGrid, summaryGridEl, card));

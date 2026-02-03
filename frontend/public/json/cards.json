@@ -1,6 +1,6 @@
 {
   "cards": {
-    "motivations": [
+    "motivation": [
       {
         "id": 1,
         "title": "🎯 Strategic Driver",
@@ -98,7 +98,7 @@
         "corner": "br"
       }
     ],
-    "strengths": [
+    "strength": [
       {
         "id": 101,
         "title": "💡 Smart Brain",
