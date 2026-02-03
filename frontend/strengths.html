@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/images/icon.png" />
+    <link rel="stylesheet" href="src/css/style.css">
+    <link rel="stylesheet" href="node_modules/gridstack/dist/gridstack.min.css">
+	<script src="node_modules/gridstack/dist/gridstack-all.js"></script>
+	<script type="module" src="/src/js/main.js"></script>
+
+    <title>Sorting Cards</title>
+</head>
+
+<body>
+    
+    <div class="content">
+
+        <div id="top-bar">
+            <div id="instructions">Choose an option below:</div>
+            <button id="continueBtn" style="display: none;">Continue</button>
+        </div>
+
+        <div class="choose-mode">
+            <button id="seeAllBtn">See all cards</button>
+            <button id="oneByOneBtn">One by one</button>
+        </div>
+
+        <div class="phase-1">
+            <div class="see-all" style="display: none;">
+                <div class="grid-stack see-all-grid"></div>
+            </div>
+            <div class="single-card" style="display: none;">
+                <div class="grid-stack single-card-grid"></div>
+                <div class="single-controls">
+                    <button id="singleYesBtn">Yes</button>
+                    <button id="singleNoBtn">No</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="phase-2" style="display: none;">
+            <div class="grid-stack top-four-grid"></div>
+        </div>
+
+        <div class="phase-3" style="display: none;">
+            <div class="grid-stack top-one-grid"></div>
+        </div>
+
+        <div class="phase-4" style="display: none;">
+            <div class="grid-stack summary-grid"></div>
+        </div>
+    </div>
+</body>
+</html>
