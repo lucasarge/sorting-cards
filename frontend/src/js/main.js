@@ -21,6 +21,7 @@ const gameState = {
     },
     top4: [],
     number1: null,
+    overuses: [],
     currentSet: null,
     allCards: [],
     cardQueue: [],
@@ -50,16 +51,37 @@ document.addEventListener('DOMContentLoaded', () => {
     startCardPhase(gameState.currentSet);
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    const infoBtn = document.getElementById('infoBtn');
+    const infoOverlay = document.getElementById('infoOverlay');
+    const closeInfoBtn = document.getElementById('closeInfoBtn');
+
+    if (infoBtn && infoOverlay) {
+        infoBtn.addEventListener('click', () => {
+            infoOverlay.style.display = 'flex';
+        });
+    }
+
+    if (closeInfoBtn && infoOverlay) {
+        closeInfoBtn.addEventListener('click', () => {
+            infoOverlay.style.display = 'none';
+        });
+    }
+});
+
+
+
 // KEY FUNCTIONS
 
 function handleContinue() {
-    console.log(gameState.phase)
     if (gameState.phase === 1) {
         goToPhase2()
     } else if (gameState.phase === 2) {
         goToPhase3()
     } else if (gameState.phase === 3) {
         goToPhase4()
+    } else if (gameState.phase === 4) {
+        goToPhase5()
     }
 }
 
@@ -85,6 +107,12 @@ async function startCardPhase(setName) {
 function addCardToGrid(grid, container, card) {
     const el = document.createElement('div');
     el.classList.add('grid-stack-item');
+
+    
+    if (card.isOveruse) {
+        el.classList.add('overuse-card');
+    }
+
     el.dataset.id = card.id;
     el.dataset.corner = card.corner;
 
@@ -460,4 +488,128 @@ function addPlaceholder(grid, x, y) {
         autoPosition: false,
         resizeHandles: []
     });
+}
+
+/*
+ _____  _                        _____ 
+|  __ \| |                   _  | ____|
+| |__) | |__   __ _ ___  ___(_) | |__  
+|  ___/| '_ \ / _` / __|/ _ \   |___ \ 
+| |    | | | | (_| \__ \  __/_   ___) |
+|_|    |_| |_|\__,_|___/\___(_) |____/ 
+
+*/
+
+const overusesOptions = {
+    column: 4,
+    cellHeight: 170,
+    margin: 10,
+    disableResize: true,
+    acceptWidgets: true,
+    float: false,
+    margin: 10
+};
+
+const overusesGrid = GridStack.init(overusesOptions, '.overuses-grid');
+
+function goToPhase5() {
+    gameState.phase = 5;
+
+    document.querySelector('.phase-4').style.display = 'none';
+
+    if (gameState.currentSet !== 'strength') {
+        goToExit();
+        return;
+    }
+
+    document.querySelector('.phase-5').style.display = 'block';
+
+    const gridEl = document.querySelector('.overuses-grid');
+    overusesGrid.removeAll();
+    overusesGrid.disable();
+
+    const topCards = gameState.allCards.filter(card =>
+        gameState.top4.map(String).includes(String(card.id))
+    );
+
+    topCards.forEach((card, i) => {
+        addCardToGrid(overusesGrid, gridEl, card);
+    });
+
+    topCards.forEach(card => {
+        addCardToGrid(
+            overusesGrid,
+            gridEl,
+            asOveruseCard(card)
+        );
+    });
+
+    document.getElementById('instructions').textContent =
+        'These strengths can be overused. Click an overuse to release it.';
+    
+    gameState.overuses = [];
+    enableOveruseSelection(gameState.overuses, '.overuses-grid');
+}
+
+function asOveruseCard(card) {
+    return {
+        id: `overuse-${card.id}`,
+        title: '⚠ Overuse',
+        description: card.overuse,
+        corner: card.corner,
+        isOveruse: true
+    };
+}
+
+function enableOveruseSelection(targetArray, gridSelector) {
+    const gridEl = document.querySelector(gridSelector);
+    const btn = document.getElementById('continueBtn');
+
+    // Disable the button initially
+    btn.disabled = false;
+    btn.textContent = 'Continue';
+
+    const cards = gridEl.querySelectorAll('.overuse-card');
+
+    cards.forEach(cardEl => {
+        cardEl.addEventListener('click', () => {
+            const cardId = cardEl.dataset.id;
+
+            if (targetArray.includes(cardId)) {
+                cardEl.classList.remove('selected');
+                targetArray.splice(targetArray.indexOf(cardId), 1);
+            } else {
+                targetArray.push(cardId);
+                cardEl.classList.add('selected');
+            }
+
+            // If any overuse cards selected, button becomes Delete
+            if (targetArray.length > 0) {
+                btn.textContent = 'Delete';
+            } else {
+                btn.textContent = 'Continue';
+            }
+        });
+    });
+
+    // Override button click for Phase 5
+    btn.onclick = () => {
+        if (btn.textContent === 'Delete') {
+            // Remove selected overuse cards
+            targetArray.forEach(id => {
+                const el = gridEl.querySelector(`.grid-stack-item[data-id="${id}"]`);
+                if (el) el.remove();
+            });
+            targetArray.length = 0; // clear selection
+            btn.textContent = 'Continue';
+        } else if (btn.textContent === 'Continue') {
+            goToExit(); // only call exit if in Continue mode
+        }
+    };
+}
+
+function goToExit() {
+    document.getElementById('top-bar').style.display = 'none';
+    document.querySelector('.phase-5').style.display = 'none';
+    document.querySelector('.exit').style.display = 'block';
 }
