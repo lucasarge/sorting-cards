@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "vite build && aws s3 cp dist\\ s3://divergent01/ --recursive"
   },
   "devDependencies": {
     "typescript": "~5.9.3",

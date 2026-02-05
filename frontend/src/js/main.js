@@ -1,4 +1,7 @@
 import { GridStack } from 'gridstack';
+import { cards } from './cards.js';
+
+console.log("wheres js")
 
 /*
   _____  _                         ___  
@@ -31,7 +34,10 @@ const gameState = {
 // DOM LOADED
 
 document.addEventListener('DOMContentLoaded', () => {
-    gameState.currentSet = window.location.pathname.slice(1)
+    console.log("dom content loaded?")
+ 
+    gameState.currentSet = window.location.pathname.slice(1).replace('.html','')
+    console.log(currentSet)
     document
         .getElementById('continueBtn')
         ?.addEventListener('click', handleContinue);
@@ -85,24 +91,19 @@ function handleContinue() {
     }
 }
 
-async function loadCards(setName) {
-    const res = await fetch('/json/cards.json');
-    if (!res.ok) throw new Error('Failed to load cards.json');
-
-    const data = await res.json();
-    return data.cards[setName] || [];
-}
-
-async function startCardPhase(setName) {
+function startCardPhase(setName) {
     gameState.phase = 1;
     gameState.currentSet = setName;
-    const cards = await loadCards(setName);
-    gameState.allCards = cards;
-    gameState.cardQueue = [...cards];
+
+    const cardSet = cards[setName] || [];
+    console.log('startCardPhase',setName,cardSet)
+    gameState.allCards = cardSet;
+    gameState.cardQueue = [...cardSet];
     gameState.currentCardIndex = 0;
 
     document.querySelector('.choose-mode').style.display = 'grid';
 }
+
 
 function addCardToGrid(grid, container, card) {
     const el = document.createElement('div');

@@ -1,5 +1,5 @@
-{
-  "cards": {
+export const cards = {
+ 
     "motivation": [
       {
         "id": 1,
@@ -212,5 +212,5 @@
         "corner": "br"
       }
     ]
-  }
+  
 }
